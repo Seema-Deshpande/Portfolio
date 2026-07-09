@@ -9,15 +9,15 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0f1210;
-    --bg-panel: #161b18;
-    --ink: #e9e6dd;
-    --ink-dim: #9aa39a;
-    --accent: #d97757;
-    --accent-dim: #8a5240;
-    --accent2: #5ec9c0;
-    --accent2-dim: #3a7d78;
-    --line: #2a302b;
+    --bg: #f7f4ee;
+    --bg-panel: #ffffff;
+    --ink: #211d19;
+    --ink-dim: #6c6558;
+    --accent: #c25f3d;
+    --accent-dim: #a84f31;
+    --accent2: #1c8c7d;
+    --accent2-dim: #146b5e;
+    --line: #e6e0d4;
     --mono: 'JetBrains Mono', monospace;
     --serif: 'Source Serif 4', Georgia, serif;
   }
@@ -49,7 +49,7 @@
   /* ---- sticky nav ---- */
   .navbar{
     position: sticky; top:0; z-index:50;
-    background: rgba(15,18,16,0.88);
+    background: rgba(247,244,238,0.88);
     backdrop-filter: blur(6px);
     border-bottom: 1px solid var(--line);
   }
@@ -70,9 +70,15 @@
     font-family: var(--mono);
     font-size: 13px;
   }
-  nav a{color: var(--ink-dim); padding-bottom:2px; border-bottom:1px solid transparent;}
+  nav a{color: var(--ink-dim); padding-bottom:2px; position:relative;}
+  nav a::after{
+    content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+    background: var(--accent); transform:scaleX(0); transform-origin:left;
+    transition: transform 0.25s cubic-bezier(.4,0,.2,1);
+  }
   nav a:hover{color: var(--accent); text-decoration:none;}
-  nav a.active{color:var(--accent); border-bottom-color:var(--accent);}
+  nav a:hover::after, nav a.active::after{transform:scaleX(1);}
+  nav a.active{color:var(--accent);}
 
   /* ---- header ---- */
   header{
@@ -91,7 +97,7 @@
     transition: background 0.1s ease;
   }
   .blob{
-    position:absolute; border-radius:50%; filter:blur(70px); opacity:0.35; z-index:0;
+    position:absolute; border-radius:50%; filter:blur(70px); opacity:0.22; z-index:0;
     animation: float 14s ease-in-out infinite;
   }
   .blob1{width:340px; height:340px; background:var(--accent); top:-120px; left:-80px;}
@@ -169,6 +175,7 @@
   }
   .btn.ghost{border-color:var(--line); color:var(--ink-dim);}
   .btn.ghost:hover{background:transparent; border-color:var(--ink-dim); color:var(--ink); box-shadow:none; transform:none;}
+  .btn:active{transform: scale(0.96);}
 
   /* ---- stats ---- */
   .stats{
@@ -222,8 +229,9 @@
     border-radius: 4px;
     margin-bottom: 14px;
     overflow:hidden;
-    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.4s ease;
   }
+  .exp.pre-reveal{opacity:0;}
   .exp:hover{ transform: translateX(3px); border-left-color:var(--accent); }
   .exp summary{
     list-style:none;
@@ -243,7 +251,8 @@
     transition: transform 0.2s ease;
     flex-shrink:0;
   }
-  .exp[open] .exp-toggle{transform: rotate(45deg);}
+  .exp.is-open .exp-toggle{transform: rotate(45deg);}
+  .exp.js-acc .exp-body{overflow:hidden; padding:0 24px; transition: max-height 0.35s cubic-bezier(.4,0,.2,1), padding-bottom 0.35s ease;}
   .exp-body{padding: 0 24px 22px;}
   .exp-body ul{padding-left:18px; color:var(--ink);}
   .exp-body li{margin-bottom:8px; font-size:15px;}
@@ -258,6 +267,7 @@
     padding:7px 14px; border-radius:14px; cursor:pointer; transition: all 0.15s ease;
   }
   .filter-btn:hover{border-color:var(--accent-dim); color:var(--ink);}
+  .filter-btn:active{transform:scale(0.94);}
   .filter-btn.active{
     background: linear-gradient(100deg, var(--accent), var(--accent2));
     border-color: transparent; color:#0f1210;
@@ -271,16 +281,18 @@
     padding: 30px 32px;
     margin-bottom: 24px;
     position: relative;
-    transition: border-color 0.2s ease, opacity 0.25s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    transition: border-color 0.2s ease, opacity 0.4s ease, transform 0.1s ease, box-shadow 0.2s ease;
     transform-style: preserve-3d;
     will-change: transform;
   }
+  .project.pre-reveal{opacity:0;}
   .project::before{
     content:"";
     position:absolute; top:0; left:0; right:0; height:3px; border-radius:6px 6px 0 0;
     background: linear-gradient(90deg, var(--card-a, var(--accent)), var(--card-b, var(--accent2)));
   }
   .project:hover{border-color: var(--accent-dim); box-shadow: 0 14px 30px rgba(0,0,0,0.35);}
+  .project.fade-out{opacity:0;}
   .project.hidden{display:none;}
   .project-head{
     display:flex;
@@ -353,7 +365,7 @@
     font-size: 13px;
   }
   .status-down{
-    color: #c99;
+    color: #b3452f;
     font-size: 12px;
     font-family: var(--mono);
   }
@@ -365,8 +377,9 @@
   @media (max-width:640px){ .lesson-grid{grid-template-columns:1fr;} }
   .lesson-card{
     background:var(--bg-panel); border:1px solid var(--line); border-radius:6px;
-    padding:20px 22px; transition: transform 0.2s ease, border-color 0.2s ease;
+    padding:20px 22px; transition: transform 0.2s ease, border-color 0.2s ease, opacity 0.4s ease;
   }
+  .lesson-card.pre-reveal{opacity:0;}
   .lesson-card:hover{ transform: translateY(-3px); border-color:var(--accent-dim); }
   .lesson-num{
     display:inline-flex; align-items:center; justify-content:center;
@@ -383,21 +396,48 @@
   .edu-meta{font-family:var(--mono); font-size:12.5px; color:var(--ink-dim);}
 
   /* ---- contact ---- */
-  .contact{
+  .contact-lede{margin-bottom:22px;}
+  .contact-card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    max-width: 520px;
+    overflow: hidden;
+  }
+  .contact-row{
     display:flex;
-    flex-wrap:wrap;
+    align-items:center;
     gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s ease;
+  }
+  .contact-row:last-child{border-bottom:none;}
+  .contact-row:hover{background: rgba(194,95,61,0.05);}
+  .contact-icon{
+    width:34px; height:34px; border-radius:8px; flex-shrink:0;
+    background: rgba(194,95,61,0.1);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--accent);
+  }
+  .contact-text{
+    flex:1;
     font-family: var(--mono);
     font-size: 14px;
-    align-items:center;
+    color: var(--ink);
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
   }
-  .contact button{
-    font-family:var(--mono); font-size:14px; background:transparent;
-    border:1px solid var(--line); color:var(--accent); padding:9px 16px;
-    border-radius:3px; cursor:pointer; transition: all 0.15s ease;
+  a.contact-text:hover{color:var(--accent);}
+  .contact-action{
+    font-family:var(--mono); font-size:12px; background:transparent;
+    border:1px solid var(--line); color:var(--ink-dim); padding:7px 14px;
+    border-radius:4px; cursor:pointer; transition: all 0.15s ease; flex-shrink:0;
   }
-  .contact button:hover{border-color:var(--accent-dim); transform:translateY(-2px);}
-  .copied-msg{color:var(--accent2); font-size:12px;}
+  .contact-action:hover{border-color:var(--accent-dim); color:var(--accent);}
+  .contact-action.copied{border-color:var(--accent2-dim); color:var(--accent2);}
 
   footer{
     padding: 40px 0 70px;
@@ -439,7 +479,7 @@
     <h1 id="typed-heading"></h1>
     <p class="lede">Seven years building production JavaScript systems — Node.js, React, Angular, Kafka, the enterprise stuff that doesn't demo well but has to actually work. Now expanding into <span class="grad-text" style="font-weight:600;">generative AI and agent-based development</span>, with four MERN apps to show for it, each with a real AI feature and a real failure mode I had to design around.</p>
     <div class="header-actions">
-      <a class="btn" href="https://linkedin.com/in/seema-deshpande" target="_blank">LinkedIn ↗</a>
+      <a class="btn" href="https://www.linkedin.com/in/seema-d-297829115" target="_blank">LinkedIn ↗</a>
       <a class="btn" href="https://github.com/Seema-Deshpande" target="_blank">GitHub ↗</a>
       <a class="btn ghost" href="Seema_Deshpande_Resume.docx" download>Download résumé ↓</a>
     </div>
@@ -469,7 +509,7 @@
   <div class="wrap reveal">
     <h2>Where this is coming from</h2>
     <p class="body-text">Most of my career has been enterprise JavaScript: Node.js microservices, multi-tenant platforms, real-time Kafka pipelines, and enough AppScan/SAST security remediation to know that "just call the API" is never the whole job. That background is why the projects below aren't demos with a chatbot bolted on — each one has a real AI feature doing real work, and a moment where the AI call failed and I had to decide what the user should actually see instead.</p>
-    <p class="body-text">I'm currently working through the <span class="em">Professional Certificate in Generative AI and Agents for Software Development</span> at UT Austin's McCombs School of Business. The four projects further down came out of that program.</p>
+    <p class="body-text">In 2026 I completed the <span class="em">Professional Certificate in Generative AI and Agents for Software Development</span> at UT Austin's McCombs School of Business. The four projects further down came out of that program.</p>
     <div class="chips">
       <span class="chip"><span class="chip-dot" style="background:var(--accent)"></span>JavaScript (ES6+)</span>
       <span class="chip"><span class="chip-dot" style="background:var(--accent2)"></span>TypeScript</span>
@@ -491,7 +531,7 @@
     <h2>Experience</h2>
     <p class="body-text" style="margin-bottom:24px;">Click a role to expand it.</p>
 
-    <details class="exp" open>
+    <details class="exp pre-reveal" open>
       <summary>
         <div>
           <div class="exp-role">Senior JavaScript Engineer — Encora (client: Halliburton)</div>
@@ -512,7 +552,7 @@
       </div>
     </details>
 
-    <details class="exp">
+    <details class="exp pre-reveal">
       <summary>
         <div>
           <div class="exp-role">JavaScript Front-End Developer — Encora (client: Synerio)</div>
@@ -529,7 +569,7 @@
       </div>
     </details>
 
-    <details class="exp">
+    <details class="exp pre-reveal">
       <summary>
         <div>
           <div class="exp-role">Full Stack JavaScript Developer — Encora (client: Telecalm)</div>
@@ -562,7 +602,7 @@
       <button class="filter-btn" data-filter="writing">Writing Assist</button>
     </div>
 
-    <div class="project tilt" data-tags="search summarization" style="--card-a:#d97757; --card-b:#5ec9c0;">
+    <div class="project tilt pre-reveal" data-tags="search summarization" style="--card-a:#d97757; --card-b:#5ec9c0;">
       <span class="ribbon">★ favorite build</span>
       <div class="project-head">
         <div class="project-title-row">
@@ -586,7 +626,7 @@
       <div class="project-tags"><span class="ptag">search</span><span class="ptag">summarization</span></div>
     </div>
 
-    <div class="project tilt" data-tags="voice summarization" style="--card-a:#5ec9c0; --card-b:#d97757;">
+    <div class="project tilt pre-reveal" data-tags="voice summarization" style="--card-a:#5ec9c0; --card-b:#d97757;">
       <div class="project-head">
         <div class="project-title-row">
           <span class="project-icon">
@@ -609,7 +649,7 @@
       <div class="project-tags"><span class="ptag">voice</span><span class="ptag">image/OCR</span><span class="ptag">summarization</span></div>
     </div>
 
-    <div class="project tilt" data-tags="summarization writing" style="--card-a:#d97757; --card-b:#5ec9c0;">
+    <div class="project tilt pre-reveal" data-tags="summarization writing" style="--card-a:#d97757; --card-b:#5ec9c0;">
       <div class="project-head">
         <div class="project-title-row">
           <span class="project-icon">
@@ -627,7 +667,7 @@
       <div class="project-tags"><span class="ptag">summarization</span><span class="ptag">writing assist</span></div>
     </div>
 
-    <div class="project tilt" data-tags="summarization writing" style="--card-a:#5ec9c0; --card-b:#d97757;">
+    <div class="project tilt pre-reveal" data-tags="summarization writing" style="--card-a:#5ec9c0; --card-b:#d97757;">
       <div class="project-head">
         <div class="project-title-row">
           <span class="project-icon">
@@ -655,19 +695,19 @@
     <h2>What I actually learned</h2>
     <p class="body-text" style="margin-bottom:24px;">Not "leveraged AI to enhance UX." The real, recurring stuff across all four builds:</p>
     <div class="lesson-grid">
-      <div class="lesson-card">
+      <div class="lesson-card pre-reveal">
         <div class="lesson-num">01</div>
         <p>AI features fail differently than normal API calls — rate limits, token exhaustion, and slow or malformed responses all need their own handling, not a generic try/catch.</p>
       </div>
-      <div class="lesson-card">
+      <div class="lesson-card pre-reveal">
         <div class="lesson-num">02</div>
         <p>What you show the user when the AI call fails matters as much as what you show when it works. A silent failure or a raw error message is worse than the feature not existing.</p>
       </div>
-      <div class="lesson-card">
+      <div class="lesson-card pre-reveal">
         <div class="lesson-num">03</div>
         <p>Testing AI features costs real money and real time — you can't just re-run a suite hundreds of times the way you would with normal unit tests, so you learn to test smarter and mock more.</p>
       </div>
-      <div class="lesson-card">
+      <div class="lesson-card pre-reveal">
         <div class="lesson-num">04</div>
         <p>The AI feature is maybe 20% of the actual work. The other 80% is the same fundamentals I already knew — auth, schema design, state management — which is why 7 years of that background made these builds faster, not irrelevant.</p>
       </div>
@@ -688,7 +728,7 @@
     </div>
     <div class="edu-row">
       <span class="edu-name">Professional Certificate in Generative AI and Agents for Software Development — UT Austin, McCombs School of Business</span>
-      <span class="edu-meta">In progress</span>
+      <span class="edu-meta">2026</span>
     </div>
   </div>
 </section>
@@ -696,11 +736,36 @@
 <section id="contact">
   <div class="wrap reveal">
     <h2>Get in touch</h2>
-    <div class="contact">
-      <button id="copyEmailBtn">seemadeshpande12@gmail.com — click to copy</button>
-      <a class="btn ghost" href="https://linkedin.com/in/seema-deshpande" target="_blank">linkedin.com/in/seema-deshpande</a>
-      <a class="btn ghost" href="https://github.com/Seema-Deshpande" target="_blank">github.com/Seema-Deshpande</a>
-      <span class="copied-msg" id="copiedMsg"></span>
+    <p class="body-text contact-lede">Open to full-stack and AI engineering roles. Easiest way to reach me is email or LinkedIn.</p>
+    <div class="contact-card">
+      <div class="contact-row">
+        <span class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" stroke="none"/><path d="M22 6l-10 7L2 6" fill="none"/><path d="M2 6h20v12H2z" fill="none"/></svg>
+        </span>
+        <span class="contact-text">seemadeshpande12@gmail.com</span>
+        <button class="contact-action" id="copyEmailBtn">Copy</button>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8.24h4.56V23H.22V8.24zM8.22 8.24h4.37v2.02h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7v8.1h-4.56v-7.18c0-1.71-.03-3.91-2.38-3.91-2.39 0-2.76 1.87-2.76 3.79v7.3H8.22V8.24z"/></svg>
+        </span>
+        <a class="contact-text" href="https://www.linkedin.com/in/seema-d-297829115" target="_blank">linkedin.com/in/seema-d-297829115</a>
+        <button class="contact-action" onclick="window.open('https://www.linkedin.com/in/seema-d-297829115','_blank')">Open</button>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.73.5.98 5.24.98 11.5c0 5.02 3.26 9.28 7.77 10.78.57.1.78-.25.78-.55v-2.14c-3.16.69-3.83-1.36-3.83-1.36-.52-1.31-1.26-1.66-1.26-1.66-1.03-.7.08-.69.08-.69 1.14.08 1.74 1.17 1.74 1.17 1.01 1.74 2.65 1.24 3.3.95.1-.73.4-1.24.72-1.53-2.52-.29-5.17-1.26-5.17-5.6 0-1.24.44-2.25 1.17-3.04-.12-.29-.51-1.45.11-3.02 0 0 .96-.31 3.15 1.16a10.9 10.9 0 0 1 5.74 0c2.19-1.47 3.15-1.16 3.15-1.16.62 1.57.23 2.73.11 3.02.73.79 1.17 1.8 1.17 3.04 0 4.35-2.65 5.31-5.18 5.59.41.35.77 1.04.77 2.1v3.11c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.02 11.5C23.02 5.24 18.27.5 12 .5z"/></svg>
+        </span>
+        <a class="contact-text" href="https://github.com/Seema-Deshpande" target="_blank">github.com/Seema-Deshpande</a>
+        <button class="contact-action" onclick="window.open('https://github.com/Seema-Deshpande','_blank')">Open</button>
+      </div>
+      <div class="contact-row">
+        <span class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </span>
+        <span class="contact-text">Seema_Deshpande_Resume.docx</span>
+        <a class="contact-action" href="Seema_Deshpande_Resume.docx" download style="text-decoration:none; display:inline-block;">Download</a>
+      </div>
     </div>
   </div>
 </section>
@@ -713,7 +778,7 @@
   // typing effect for the header
   (function(){
     const el = document.getElementById('typed-heading');
-    const text = "Senior JavaScript Engineer, seven years in — now building with LLMs instead of just around them.";
+    const text = "Seven years of production JavaScript — these days I build with LLMs, not just around them.";
     let i = 0;
     function type(){
       if(i <= text.length){
@@ -765,6 +830,21 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
+  // staggered fade-in for cards (projects, lessons, experience)
+  ['#projects .project', '#lessons .lesson-card', '#experience .exp'].forEach(sel => {
+    const items = document.querySelectorAll(sel);
+    const staggerObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting){
+          const idx = Array.from(items).indexOf(entry.target);
+          setTimeout(() => entry.target.classList.remove('pre-reveal'), idx * 90);
+          staggerObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(el => staggerObserver.observe(el));
+  });
+
   // stat count-up / count-down
   const counters = document.querySelectorAll('[data-count-to]');
   const countObserver = new IntersectionObserver((entries) => {
@@ -801,8 +881,14 @@
       let visibleCount = 0;
       projects.forEach(p => {
         const match = f === 'all' || p.dataset.tags.includes(f);
-        p.classList.toggle('hidden', !match);
         if(match) visibleCount++;
+        if(match){
+          p.classList.remove('hidden');
+          requestAnimationFrame(() => p.classList.remove('fade-out'));
+        } else {
+          p.classList.add('fade-out');
+          setTimeout(() => p.classList.add('hidden'), 380);
+        }
       });
       document.getElementById('noResults').style.display = visibleCount === 0 ? 'block' : 'none';
     });
@@ -823,12 +909,47 @@
     });
   });
 
+  // smooth accordion for experience entries (progressive enhancement over native <details>)
+  document.querySelectorAll('.exp').forEach(exp => {
+    const body = exp.querySelector('.exp-body');
+    const summary = exp.querySelector('summary');
+    exp.classList.add('js-acc');
+    if(exp.open){
+      exp.classList.add('is-open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    } else {
+      body.style.maxHeight = '0px';
+      body.style.paddingBottom = '0px';
+    }
+    summary.addEventListener('click', function(e){
+      e.preventDefault();
+      if(exp.classList.contains('is-open')){
+        // closing: animate to 0, then drop native open attribute
+        body.style.maxHeight = body.scrollHeight + 'px';
+        exp.classList.remove('is-open');
+        requestAnimationFrame(() => {
+          body.style.maxHeight = '0px';
+          body.style.paddingBottom = '0px';
+        });
+        setTimeout(() => { exp.open = false; }, 360);
+      } else {
+        // opening: render content, then animate to full height
+        exp.open = true;
+        exp.classList.add('is-open');
+        body.style.paddingBottom = '22px';
+        body.style.maxHeight = body.scrollHeight + 'px';
+      }
+    });
+  });
+
   // copy email
   document.getElementById('copyEmailBtn').addEventListener('click', function(){
+    const btn = this;
     navigator.clipboard.writeText('seemadeshpande12@gmail.com').then(function(){
-      const msg = document.getElementById('copiedMsg');
-      msg.textContent = '✓ Copied!';
-      setTimeout(() => msg.textContent = '', 1800);
+      const original = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 1800);
     });
   });
 </script>
